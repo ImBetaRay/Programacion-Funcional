@@ -1,0 +1,25 @@
+Listing of compilation of file /home/betaray/Documents/functionalProgramming/lisp/ejercicios/textGame.lisp
+on 2023-06-14 21:03:32 by CLISP, version 2.49.93+ (2018-02-18) (built on root2 [65.108.105.205])
+;; Compiling file /home/betaray/Documents/functionalProgramming/lisp/ejercicios/textGame.lisp ...
+
+Disassembly of function #:|1 6 (DEFPARAMETER *NODES* '(# # #))-1|
+(CONST 0) = (SPECIAL *NODES*)
+(CONST 1) = *NODES*
+(CONST 2) = 
+((LIVING-ROOM (YOU ARE IN THE LIVING-ROOM. A WIZARD IS SNORLING LOUDLY ON THE COUCH.))
+ (GARDEN (YOU ARE IN A BEAUTIFUL GARDE. THERE IS A WELL IN FRONT OF YOU.))
+ (ATTIC (YOU ARE IN THE ATTIC. THERE IS A GIANT WELDING TORCH IN THE CORNER.)))
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+7 byte-code instructions:
+0     (CONST&PUSH 0)                      ; (SPECIAL *NODES*)
+1     (CALLS1 98)                         ; PROCLAIM
+3     (CONST&PUSH 1)                      ; *NODES*
+4     (CONST&PUSH 2)                      ; ((LIVING-ROOM #) (GARDEN #) ...)
+5     (CALLS1 90)                         ; SYSTEM::SET-SYMBOL-VALUE
+7     (CONST 1)                           ; *NODES*
+8     (SKIP&RET 1)
+;; Wrote file /home/betaray/Documents/functionalProgramming/lisp/ejercicios/textGame.fas
+;; Wrote file /home/betaray/Documents/functionalProgramming/lisp/ejercicios/textGame.lis

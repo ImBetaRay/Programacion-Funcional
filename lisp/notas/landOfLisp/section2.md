@@ -102,3 +102,69 @@ Resulta que podemos ejecutar el codigo almacenado en esa variable de la siguient
     >(eval *foo*)
     3
 
+## Funciones Lambda
+
+Es imposible hablar de un lenguaje funcional sin pasar por las lambdas, despues de todo por ellas es que existen.
+
+### ¿Qué hace una lambda?
+
+En pocas palabras, el comando lambda crea una función sin darle un nombre. Por ejemplo tenemos la siguiente función que toma un número y lo divide a la mitad.
+
+    >(defun half (n)
+        (/ n 2))
+
+Así es como lo escribiriamos hasta el momento. Resulta que en Lips, las funciones realmente son valores que podemos ver y pasar como si fuesen números o listas. Un programador experimentado con Lisp diría que las funciones son _valores de primera clase_. Coomo vimos anteriormente, podemos acceder a la función representada por la palabra _half_ usando el operador de función:
+
+    >#'half
+    #<FUNCTION HALF ...>
+
+El comando lambda nos permite hacer estas dos cosas en un solo paso. Por ejemplo,
+
+    >(lambda (n) (/ n 2))
+    #<FUNCTION :LAMBDA ...>
+
+El primer parametro corresponde a los parametros de la función anonima y el segundo no es más que el cuerpo de la función.
+
+Una vez que tienes tu función lambda se la puedes pasar a alguna función que reciba como parametro a una función como puede ser _mapcar_ o _apply_. Por ejemplo para dividir a la mitad todos los elementos de una lista:
+
+    >(mapcar (lambda (n) (/ n 2)) '(2 4 6))
+    (1,2,3)
+
+Las funciones lambda son peculiarmente utiles cuando se programa funcionalmente, crean un nuevo estilo de funciones llamadas funciones de orden superior y permiten muchas cosas que entre más nos adentremos econtreremos lo increibles que son.
+
+## Más allá de las Listas Basicas
+ 
+### Pares
+
+Una forma de construir tuplas de dos elementos (pares) es usar el operador cons con dos elementos. Cons usualmente usado para constuir listas, si recibe como parametros dos elementos en lugar de un elemento y una lista se generara una tupla que sigue siendo tratada como una lista.
+
+    >(cons 2 3)
+    (2 . 3)
+
+Es beneficiosa esta estructura pues permite acceder a los elementos de forma constante con los elementos _car_ y _cdr_.
+
+### Listas Circulares
+
+Una lista circular es una lista que en lugar de que su ultimo elemento apunte al vacio este apunta al inicio de la lista.
+
+De forma predeterminada lisp no es tan listo como para entender cuando es que una lista se está autoreferenciando es por eso que requerimos ejecutar el siguiente comando para advertirle.
+
+    (setf *print-circle* t)
+
+Para crear una lista circular (si es que no se quiere definir toda la estructura de datos) se hará de la siguiente forma,
+
+    >(defparameter foo '(1 2 3))
+    FOO
+    >(setf (cdddr foo) foo)
+
+Lo anterior no hace más que crear una lista infinita que se vería de la siguiente forma '(1 2 3 1 2 3 1 2 3 ...)
+
+### Listas Asociativas
+
+Son listas que se componen de la estructura llave valor (las usamos en el [textGame](lisp/ejercicios/landOfLisp/textGame)). Son parecidas a los diccionarios pero sin la beneficiosa velocidad de consulta.
+
+Se ven de la siguiente forma:
+
+    (defparameter *drink-order* '(bill . double-expresso)
+                                 (lisa . small-drip-coffee)
+                                 john . medium-latte)

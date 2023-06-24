@@ -168,3 +168,117 @@ Se ven de la siguiente forma:
     (defparameter *drink-order* '(bill . double-expresso)
                                  (lisa . small-drip-coffee)
                                  john . medium-latte)
+
+## Tipos Avanzados y Genericos
+
+### Array
+
+El array común es muy similar a una lista. La ventaja del array sobrea la lista es que el tiempo de consulta es constante.
+
+Para crear un array se usa el comando __make-array__, especificando el tamaño del array:
+
+    >(make-array 3)
+    #(NIL NIL NIL)
+
+El ejemplo anterior crea un arreglo de tamaño 3. Para indicar que no es un lista, Common Lisp añade un **#** al principio del arreglo.
+
+Para obtener y modificar elementos en un arreglo usamos la función __aref__. Por ejemplo, para obtener el elemento en el indice 1:
+
+    >(defparameter x (make-array 3))
+    #(NIL NIL NIL)
+    >(aref x 1)
+    NIL
+
+aref solo es suficiente para acceder a elementos, si se queiren modificar es necesario componer aref con __setf__:
+
+    >(setf (aref x 1) 'foo)
+    FOO
+    >x
+    #(NIL FOO NIL)
+
+_Notemos que el hecho de que podamos usar la función __setf__ tanto en lista como en arreglos nos da na pista de que podemos programar de forma general._
+
+Veamos un ejemplo de lo anterior con listas y arreglos.
+Tenemos el siguiente programa con listas:
+
+    >(setf foo '(a b c))
+    (A B C)
+    >(second foo)
+    B
+    >(setf (second foo) 'z)
+    Z
+    >foo
+    (A Z C)
+
+Ahora veamos como _setf_ es generico y da lugar a cosas complejas:
+
+    >(setf foo (make-array 4))
+    #(NIL NIL NIL NIL)
+    >(setf (aref foo 2) '(x y z))
+    (X Y Z)
+    >foo
+    #(NIL NIL (X Y Z) NIL)
+    >(setf (car (aref foo 2)) (make-hash-table))
+    #S(HASH-TABLE)
+    >(setf (getHash 'zoink (car (aref foo 2))) 5)
+    5
+    >foo
+    #(NIL NIL (#S(HASH-TABLE (ZOINK . 5)) Y Z ) NIL)
+
+Parece que existiendo las listas los arreglos carecen de sentido, pero esto es mentira pues las listas al estar hechas de celdas compuestas por _cons_ para acceder a un elemento en especifico se tiene que consultar una a una las celdas cosa que es poco practica si tomamos millones de datos. Para los arreglos el calculo anterior toma lo que toma hacer algunos calculos matematicos pues tiempo de acceso es constante dado un polinomio llamado _polinomio de direccionamiento_.
+
+### Tablas HASH
+
+Como vimos anteriormente las tablas Hash son similares a las listas asociativas excepto que los Hash son más rapidas al consultar elementos arbitrarios. 
+
+Las tablas hash son tan rapidas que a veces parecen magias, puede meter tu tabla en una computadora de los 80 y se calculará enseguida.
+
+Para crear una tabla usamos el comando `make-hash-table`:
+
+    >(make-hash-table)
+    #S(HASH-TABLE ...)
+
+Como las AList las tablas hash guardan elementos usando el metodo *llave/valor*. Para obtener un valor usamos la funcion `gethash`. Y al igual que con los arreglos, para modifica/añadir un elemento usamos la composición de gethash con setf:
+
+    >(defparameter x (make-hash-table))
+    #S(HASH-TABLE ...)
+    >(setf (gethash 'yup x) '25)
+    >(gethash 'yup x)
+    25 ;
+    T
+
+__El segundo valor devuelto corresponde a si es que se encontró el valor o no habia coincidencias.__
+
+Notemos que aquí tambien se nos da una pista de que las funciones en lisp pueden devolver más de un valor.
+
+
+## Estructuras en Common Lisp
+
+Las estructuras pueden ser usadas para representar objetos con propiedades, como es usual de los lenguajes orientados a objetos. Para construir una estructura usamos el comando defstruct:
+
+    >(defstruct person
+                name
+                age
+                waist-size
+                favorite-color)
+    PERSON
+
+Según la definición anterior, una persona tiene cuatro propiedades (tambien llamadas slots por los expertos de Lisp): name, age, waist-size y favorite-color.   
+
+ Ahora podemos instanciar nuestro "objeto" con la funcion make-person que Lisp amablemente crea cuando definimos la estructura.
+
+    >(defparameter *bob* (make-person :name "Bob"
+                                      :age 35
+                                      :waist-size 32
+                                      :favorite-color "blue"))
+    *BOB*
+
+Ahora podemos ver a Bob en la terminal marcada como una estructura por el prefijo #S.
+
+    >*bob*
+    #S(PERSON :NAME "Bob" :AGE 35 :WAIST-SIZE 32 :FAVORITE-COLOR "blue")
+
+Ahora notemos que Lisp crea un metodo para acceder a cada "atributo" compuesto de la siguiente forma `structura-atributo`. Ahora componiendo esta función y setf podemos modificar nuestra estructura:
+
+    >(setf (person-age *bob*) 36)
+    36
